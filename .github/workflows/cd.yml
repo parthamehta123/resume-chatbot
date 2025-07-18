@@ -1,0 +1,34 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-run-embeddings:
+    name: Build & Run Embeddings
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Build Embedding Image
+        run: docker build -t resume-embedder ./images/embeddings
+
+      - name: Run Embedding Job
+        run: docker run -v ${{ github.workspace }}/resumes:/app/resumes resume-embedder
+
+  build-and-run-ui:
+    name: Build & Run UI
+    needs: build-and-run-embeddings
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Build UI
+        run: docker build -t resume-ui ./images/streamlit
+
+      - name: Run UI (non-blocking)
+        run: |-
+          docker run -d -p 8501:8501 resume-ui

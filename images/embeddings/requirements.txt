@@ -1,0 +1,12 @@
+boto3
+langchain-aws
+langchain-chroma
+langchain-community
+sentence-transformers
+langchain-ollama
+pytest
+pyyaml
+gitpython
+pypdf
+streamlit
+chromadb
